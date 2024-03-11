@@ -35,6 +35,10 @@ $(document).ready(function () {
         var id = $(this).data("kundan");
         SendEmail(id);
     });
+    $(document).on('click', '.btnTelegram', function () {
+        var id = $(this).data("kundan");
+        SendTelegram(id);
+    });
 
 
 
@@ -67,7 +71,7 @@ $(document).ready(function () {
             success: function (data) {
                 $('.employee-table-body').empty();
                 $.each(data, function (index, employee) {
-                    var row = '<tr>' +
+                    var row = '<tr class="text-captlize">' +
                         '<td>' + (index + 1) + '</td>' +
                         '<td>' + employee.name + '</td>' +
                         '<td>' + employee.email + '</td>' +
@@ -75,10 +79,12 @@ $(document).ready(function () {
                         '<td>' + employee.dob + '</td>' +
                         '<td>' + employee.state + '</td>' +
                         '<td>' + employee.city + '</td>' +
-                        '<td><button type="button" class="btn btn-primary btnEdit" data-kundan="' + employee.id + '">Edit</button></td>' +
-                        '<td><button type="button" class="btn btn-danger btnDelete" data-kundan="' + employee.id + '">Delete</button></td>' +
-                        '<td><button type="button" class="btn btn-success btnMobile" data-kundan="' + employee.id + '">WhatsApp</button></td>' +
-                        '<td><button type="button" class="btn btn-warning btnEmail" data-kundan="' + employee.id + '">Email</button></td>' +
+                        '<td><button type="button" class="btn btn-primary btnEdit" data-kundan="' + employee.id + '"><i class="bi bi-pencil-square"></i></button></td>' +
+                        '<td><button type="button" class="btn btn-danger btnDelete" data-kundan="' + employee.id + '"><i class="bi bi-trash"></i></button></td>' +
+                        '<td><button type="button" class="btn btn-success btnMobile" data-kundan="' + employee.id + '"><i class="bi bi-whatsapp"></i></button></td>' +
+                        '<td><button type="button" class="btn btn-secondary btnEmail" data-kundan="' + employee.id + '"><i class="bi bi-envelope"></i></button></td>' +
+                        '<td><button type="button" class="btn btn-primary btnTelegram" data-kundan="' + employee.id + '"><i class="bi bi-telegram"></i></button></td>' +
+                        /*'<td><a href="https://t.me/{employee.id}?text=employee.name">Send Message on Telegram</a></td>' +*/
                         '</tr>';
                     $('.employee-table-body').append(row);
                 });
@@ -153,8 +159,7 @@ $(document).ready(function () {
                 $('#ddlState').change();
                 var ddlState = $('#ddlState').val();
                 GetCity(ddlState)
-                $('#txtCity').val(rsp.city);
-                $('.citylist').change();
+                $('#ddlCity').val(rsp.city);
             },
             error: function () {
 
@@ -218,12 +223,88 @@ $(document).ready(function () {
                 window.open(whatsappUrl, '_blank');
             },
             error: function () {
-                var whatsappUrl = 'https://api.whatsapp.com/send?phone=' + '+919876543210' + '&text=Hello%2C%20I%20want%20to%20send%20you%20a%20message!';
+                var whatsappUrl = 'https://api.whatsapp.com/send?phone=' + rsp.mobile + '&text=Hello%2C%20I%20want%20to%20send%20you%20a%20message!';
                 window.open(whatsappUrl, '_blank');
             }
         });
         //window.location.href = whatsappUrl;
     }
+    //function SendTelegram(Id) {
+    //    debugger;
+    //    $.ajax({
+    //        url: '/Employee/getEmployeeById',
+    //        type: 'GET',
+    //        dataType: 'json',
+    //        data: { Id: Id },
+    //        success: function (data) {
+    //            debugger;
+    //            var rsp = data[0];
+    //            var telegramUrl = 'https://t.me/share/url?url=' + rsp.mobile + '&text=Name: ' + rsp.name + '%0D%0AEmail: ' + rsp.email + '%0D%0ADate Of Birth: ' + rsp.dob + '%0D%0AState: ' + rsp.stateName + '%0D%0ACity: ' + rsp.cityName;
+    //            window.open(telegramUrl, '_blank');
+    //        },
+    //        error: function () {
+
+    //        }
+    //    });
+    //}
+    function SendTelegram(Id) {
+        $.ajax({
+            url: 'https://api.telegram.org/bot7020996670:AAFQquBzmTtA6kbOS71mc3qhuUpeSDH8POw/getUpdates',
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                debugger
+                alert(response[0]);
+                if (response && response.ok && response.result && response.result.length > 0) {
+                    var telegramChatId = response.result[0].message.chat.id;
+                    alert('Chat ID:', telegramChatId);
+                    
+                    $.ajax({
+                        url: '/Employee/getEmployeeById',
+                        type: 'GET',
+                        dataType: 'json',
+                        data: { Id: Id },
+                        success: function (data) {
+                            debugger
+                            var rsp = data[0];
+                            var message = 'Name: ' + rsp.name + '\nEmail: ' + rsp.email + '\nDate Of Birth: ' + rsp.dob + '\nState: ' + rsp.stateName + '\nCity: ' + rsp.cityName;
+                            var telegramBotToken = '7020996670:AAFQquBzmTtA6kbOS71mc3qhuUpeSDH8POw'; // Replace 'YourBotToken' with your actual bot token
+                            var apiUrl = 'https://api.telegram.org/bot' + telegramBotToken + '/sendMessage';
+                            var requestData = {
+                                chat_id: telegramChatId,
+                                text: message
+                            };
+                            $.ajax({
+                                url: apiUrl,
+                                type: 'POST',
+                                dataType: 'json',
+                                data: requestData,
+                                success: function (response) {
+                                    debugger
+                                    alert('Message sent successfully');
+                                },
+                                error: function (error) {
+                                    debugger
+                                    alert('Error sending message');
+                                }
+                            });
+                        },
+                        error: function () {
+                            debugger
+                            alert('Error fetching employee data');
+                        }
+                    });
+                } else {
+                    debugger
+                    alert('Error: Unable to fetch chat ID');
+                }
+            },
+            error: function (error) {
+                alert('Error:', error);
+            }
+        });
+    }
+
     function SendEmail(Id) {
         debugger
         $.ajax({
@@ -249,7 +330,7 @@ $(document).ready(function () {
                     data: { email: email, subject: subject, body: body },
                     success: function (response) {
                         debugger
-                        alert(response.message);
+                        alert(response[0]);
                     },
                     error: function (xhr, status, error) {
                         debugger
@@ -258,11 +339,9 @@ $(document).ready(function () {
                 });
             },
             error: function (xhr, status, error) {
-                // Handle error when fetching employee details
                 alert('An error occurred while fetching employee details: ' + error);
             }
         });
         //window.location.href = whatsappUrl;
     }
 });
-

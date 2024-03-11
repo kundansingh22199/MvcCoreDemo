@@ -118,7 +118,7 @@ namespace MvcCoreDemo.Implementation
         {
             try
             {
-                using(var con=new SqlConnection(_configuration.GetConnectionString("SqlCon")))
+                using (var con = new SqlConnection(_configuration.GetConnectionString("SqlCon")))
                 {
                     SqlCommand cmd = new SqlCommand("SP_CityMaster", con);
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -145,7 +145,7 @@ namespace MvcCoreDemo.Implementation
         {
             try
             {
-                using(var con=new SqlConnection(_configuration.GetConnectionString("SqlCon")))
+                using (var con = new SqlConnection(_configuration.GetConnectionString("SqlCon")))
                 {
                     SqlCommand cmd = new SqlCommand("SP_StateMaster", con);
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -161,7 +161,7 @@ namespace MvcCoreDemo.Implementation
                         return null;
                     }
                 }
-                
+
             }
             catch (Exception)
             {

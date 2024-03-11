@@ -6,12 +6,12 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace MvcCoreDemo.ALlData
 {
-    public class ResponseDataList: IResponseList
+    public class ResponseDataList : IResponseList
     {
         private readonly IContract _contractServices;
         public ResponseDataList(IContract iservices)
         {
-            _contractServices= iservices;
+            _contractServices = iservices;
         }
 
         public List<CityModel> GetCityList(int StateId)
@@ -29,7 +29,7 @@ namespace MvcCoreDemo.ALlData
                     });
                 }
             }
-            
+
             return sm;
         }
 

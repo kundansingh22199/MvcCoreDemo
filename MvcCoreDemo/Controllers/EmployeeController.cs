@@ -43,9 +43,9 @@ namespace MvcCoreDemo.Controllers
         public IActionResult Index(EmployeeModel emp)
         {
             string st = "";
-            if (emp.Name != null && emp.Mobile!=null && emp.Email!=null && emp.Mobile!=null && emp.State!=null && emp.City!=null)
+            if (emp.Name != null && emp.Mobile != null && emp.Email != null && emp.Mobile != null && emp.State != null && emp.City != null)
             {
-                if(_contractServices.saveUpdateDelData(emp, "Insert"))
+                if (_contractServices.saveUpdateDelData(emp, "Insert"))
                 {
                     st = "Successfull Save Employee";
                 }
@@ -60,7 +60,7 @@ namespace MvcCoreDemo.Controllers
         public IActionResult Update(EmployeeModel emp)
         {
             string st = "";
-            if (emp.Id !=0 && emp.Name != null && emp.Mobile != null && emp.Email != null && emp.Mobile != null && emp.State != null && emp.City != null)
+            if (emp.Id != 0 && emp.Name != null && emp.Mobile != null && emp.Email != null && emp.Mobile != null && emp.State != null && emp.City != null)
             {
                 if (_contractServices.saveUpdateDelData(emp, "Update"))
                 {
@@ -77,7 +77,7 @@ namespace MvcCoreDemo.Controllers
         public IActionResult Delete(EmployeeModel emp)
         {
             string st = "";
-            if (emp.Id != 0 )
+            if (emp.Id != 0)
             {
                 if (_contractServices.saveUpdateDelData(emp, "Delete"))
                 {
@@ -103,7 +103,7 @@ namespace MvcCoreDemo.Controllers
             return Json(list);
         }
         [HttpPost]
-        public IActionResult SendOTP(string email , string subject, string body)
+        public IActionResult SendOTP(string email, string subject, string body)
         {
             string senderEmail = "kundansingh22199@gmail.com";
             string senderPassword = "wzzz gpps ellf lycr";
@@ -118,11 +118,11 @@ namespace MvcCoreDemo.Controllers
                     try
                     {
                         client.Send(message);
-                        return Ok("Employee Details sent successfully.");
+                        return Json("Employee Details sent successfully.");
                     }
                     catch (Exception ex)
                     {
-                        return StatusCode(500, $"Error sending Details: {ex.Message}");
+                        return Json(500, $"Error sending Details: {ex.Message}");
                     }
                 }
             }
